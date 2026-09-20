@@ -14,6 +14,20 @@
   <!-- Adsterra Social Bar Ad Script -->
   <script type="text/javascript" src="https://pl31431874.profitableratecpmnetwork.com/f4/e1/46/f4e14603806b3b4a8978ada7742f8e47.js"></script>
 
+  <!-- Monetag Push Notification Service Worker (Zone 11848080) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+          .then(function(reg) { console.log('Monetag SW Registered:', reg.scope); })
+          .catch(function() {
+            navigator.serviceWorker.register('sw.js')
+              .catch(function(e) { console.warn('SW register note:', e); });
+          });
+      });
+    }
+  </script>
+
 
   <!-- Google Fonts: Hind for Hindi typography, Plus Jakarta Sans & JetBrains Mono for codes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
