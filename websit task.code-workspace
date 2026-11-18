@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../c progaming/new-project"
+		}
+	],
+	"settings": {
+		"liveServer.settings.port": 5501
+	}
+}
