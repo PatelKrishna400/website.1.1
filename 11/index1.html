@@ -329,7 +329,26 @@
         </p>
       </div>
 
-      <!-- COMPACT CIRCLE TABS CONTAINER -->
+      <!-- BONUS LOCKED STATE -->
+      <div id="bonusLockedState" class="p-8 sm:p-10 rounded-2xl bg-blue-50/60 border-2 border-dashed border-blue-300 text-center my-4 transition-all duration-300">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 text-3xl mb-3 shadow-sm">
+          🔒
+        </div>
+        <h4 class="text-xl sm:text-2xl font-black text-slate-900 mb-2">
+          Bonus Verification Hub Locked
+        </h4>
+        <p class="text-xs sm:text-sm text-slate-600 max-w-md mx-auto mb-6 font-medium leading-relaxed">
+          The Bonus Verification Hub is currently locked. Click the verification button below to start reader verification and unlock Level 1 through Level 4.
+        </p>
+        <button id="bonusUnlockBtn" onclick="startVerificationCountdown()" class="btn-blue-primary px-8 py-3.5 rounded-xl font-bold text-base sm:text-lg inline-flex items-center justify-center gap-2.5 shadow-lg hover:scale-105 active:scale-95 transition-all">
+          <span>🚀</span>
+          <span>Start Verification (Unlock Bonus Hub)</span>
+        </button>
+      </div>
+
+      <!-- BONUS ACTIVE CONTENT (Revealed when timer is clicked) -->
+      <div id="bonusActiveContent" class="hidden transition-all duration-300">
+<!-- COMPACT CIRCLE TABS CONTAINER -->
       <div class="p-2 sm:p-4 bg-[#f0f4f9] rounded-2xl sm:rounded-3xl border border-slate-200/80 mb-7 w-full overflow-hidden">
         <div class="flex items-center justify-between sm:justify-center gap-1 sm:gap-2 w-full max-w-lg mx-auto py-1">
 
@@ -501,6 +520,8 @@
         </div>
       </div>
 
+          </div>
+
     </section>
 
     <!-- Bottom Destination Unlock Container -->
@@ -536,6 +557,7 @@
       mainTimerDuration: 30,
       mainTimerRunning: false,
       mainTimerDone: false,
+      bonusUnlocked: false,
       currentTab: 1,
       finalCode: "228737",
       destinationUrl: "https://website2task.blogspot.com/2026/09/website11.html",
@@ -633,6 +655,19 @@
 
     // Top 30-Second Verification Logic
     function startVerificationCountdown() {
+      // 1. Immediately unlock Bonus Hub on timer start
+      if (!CONFIG.bonusUnlocked) {
+        CONFIG.bonusUnlocked = true;
+        const lockedEl = document.getElementById('bonusLockedState');
+        const activeEl = document.getElementById('bonusActiveContent');
+        if (lockedEl) lockedEl.classList.add('hidden');
+        if (activeEl) {
+          activeEl.classList.remove('hidden');
+        }
+        showToast('Reader Verification Started! Bonus Hub Unlocked! 🔓', '🎉');
+      }
+
+      // 2. Start top 30-sec reader countdown
       if (CONFIG.mainTimerRunning || CONFIG.mainTimerDone) return;
       playTone('click');
 
@@ -645,36 +680,40 @@
       const timerSec = document.getElementById('mainTimerSeconds');
       const mainBar = document.getElementById('mainProgressBar');
 
-      btn.classList.add('hidden');
-      countdownBox.classList.remove('hidden');
+      if (btn) btn.classList.add('hidden');
+      if (countdownBox) countdownBox.classList.remove('hidden');
 
       const interval = setInterval(() => {
         timeLeft--;
         const percent = ((CONFIG.mainTimerDuration - timeLeft) / CONFIG.mainTimerDuration) * 100;
 
-        timerSec.innerText = timeLeft + "s remaining";
-        mainBar.style.width = percent + "%";
+        if (timerSec) timerSec.innerText = timeLeft + "s remaining";
+        if (mainBar) mainBar.style.width = percent + "%";
 
         if (timeLeft <= 0) {
           clearInterval(interval);
           CONFIG.mainTimerRunning = false;
           CONFIG.mainTimerDone = true;
 
-          btn.classList.remove('hidden');
-          btn.disabled = true;
-          btn.classList.remove('btn-blue-primary');
-          btn.classList.remove('btn-red-primary');
-          btn.classList.add('btn-disabled');
-          btnText.innerText = "✓ Reader Verification Complete";
-          document.getElementById('mainVerifyIcon').innerText = "✓";
+          if (btn) {
+            btn.classList.remove('hidden');
+            btn.disabled = true;
+            btn.classList.remove('btn-blue-primary');
+            btn.classList.add('btn-disabled');
+          }
+          if (btnText) btnText.innerText = "✓ Reader Verification Completed";
+          const icon = document.getElementById('mainVerifyIcon');
+          if (icon) icon.innerText = "✓";
 
           playTone('success');
-          showToast('30-second Reader Verification complete! Destination unlocked.', '🎉');
+          showToast('30-Second Verification Completed! Destination Link Ready! 🏆', '🎉');
 
-          document.getElementById('bottomLockedNotice').classList.add('hidden');
+          const bottomNotice = document.getElementById('bottomLockedNotice');
+          if (bottomNotice) bottomNotice.classList.add('hidden');
           const unlockedBox = document.getElementById('bottomUnlockedContainer');
-          unlockedBox.classList.remove('hidden');
-          document.getElementById('finalDestinationBtn').href = CONFIG.destinationUrl;
+          if (unlockedBox) unlockedBox.classList.remove('hidden');
+          const destBtn = document.getElementById('finalDestinationBtn');
+          if (destBtn) destBtn.href = CONFIG.destinationUrl;
         }
       }, 1000);
     }
